@@ -12,4 +12,12 @@ function sumLineFour(m) {
 	return lineFour.reduce((acc,act)=>acc+act)
 	
 }
-console.log(sumLineFour(M));
+//console.log(sumLineFour(M));
+//Item b)
+function sumLineTwo(m) {
+	const lineFour=m[1]
+	return lineFour.reduce((acc,act)=>acc+act)
+	
+}
+//console.log(sumLineTwo(M));
+//Item c)
