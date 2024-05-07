@@ -21,3 +21,21 @@ function sumLineTwo(m) {
 }
 //console.log(sumLineTwo(M));
 //Item c)
+function sumMainDiagonal(m) {
+	const mainDiagonal=m.map((linha,i)=>linha[i])
+	return mainDiagonal.reduce((acc,act)=>acc+act)
+
+	
+}
+//console.log(sumMainDiagonal(M));
+//Item d)
+function sumAllElements(m) {
+	let sum=0
+	for (let i = 0; i < m[0].length; i++) {
+		for (let j = 0; j < m.length; j++) {
+			sum+=m[i][j]
+		}
+	}
+	return sum
+}
+console.log(sumAllElements(M));
