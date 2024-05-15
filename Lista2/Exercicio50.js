@@ -46,7 +46,6 @@ function cancelBookin() {
 }
 function makeBookin() {
 	let hotelId;
-	let hotelName;
 	let client;
     
 	let hotelFound = false;
@@ -99,11 +98,18 @@ function getHotelByCity(city) {
 
 	return hotelsFounded
 }
+function reportVacancies() {
+	const report = hotels.map((hotel) => {
+		return `${hotel.nome}: ${hotel.quartosDisponiveis} vagas`;
+	    });
+	
+	return report
+}
 function useSystem() {
 	console.log("Bem-vindo ao sistema de reserva de hotéis!");
 	let opt
-	while (opt!=6) {
-		console.log("Selecione uma ação:  \n1- Listar reservas;\n2- Adicionar um hotel;\n3- Buscar hotel por cidade;\n4- Fazer uma reserva;\n5- Cancelar uma reserva;\n6- Sair.");
+	while (opt!=7) {
+		console.log("Selecione uma ação:  \n1- Listar reservas;\n2- Adicionar um hotel;\n3- Buscar hotel por cidade;\n4- Fazer uma reserva;\n5- Cancelar uma reserva;\n6- Gera relatório de vagas\n7- Sair.");
 		opt=Number(prompt("Digite o número de acordo com a ação escolhida:"))
 		switch (opt) {
 			case 1:
@@ -135,6 +141,11 @@ function useSystem() {
 				console.log(cancelBookins);
 				break;
 			case 6:
+				console.log("Aí está o relatório de vagas:");
+				const report=reportVacancies()
+				console.log(report);
+				break;
+			case 7:
 				console.log("Fim do programa");
 
 				break;
