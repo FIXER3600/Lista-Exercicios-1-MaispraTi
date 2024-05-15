@@ -13,9 +13,18 @@ function addHotel() {
 	console.log("Informe nome, cidade, quantidade de quartos totais e quantidade de quartos disponíveis para adicionar um hotel (Ex: Holiday Inn, São Paulo, 100,60)");
 	const hotel=prompt("Digite conforme o indicado: ");
 	const [nome, cidade, quartosTotais, quartosDisponiveis] = hotel.split(",")
+	const quartosTotaisInt = parseInt(quartosTotais.trim(), 10);
+	const quartosDisponiveisInt = parseInt(quartosDisponiveis.trim(), 10);
+	const name=nome.trim()
+	const findHotel=hotels.find((hotel)=>hotel.nome==name)
+	if (findHotel) {
+		console.log("Desculpe, já há um hotel com esse nome, digite outro nome para o novo hotel");
+		return
+	}
+	const city=cidade.trim()
 	let lastId=hotels[hotels.length-1].id
 	lastId++
-	hotels.push({id:lastId,nome,cidade,quartosTotais,quartosDisponiveis})
+	hotels.push({id:lastId,name,city,quartosTotaisInt,quartosDisponiveisInt})
 	return hotels
 }
 function cancelBookin() {
@@ -23,7 +32,7 @@ function cancelBookin() {
 	nameHotel=prompt("Digite o nome do hotel do qual a vaga pertence: ")
 	findedBookin=bookins.filter((bookin)=>bookin.idReserva!=id)
 	findedHotel=hotels.map(function(hotel) {
-		if (hotel.nome === nameHotel) {
+		if (hotel.nome === nameHotel && hotel.quartosDisponiveis < hotel.quartosTotais) {
 		    return {id:hotel.id,nome:hotel.nome,cidade:hotel.cidade, quartosTotais:hotel.quartosTotais,quartosDisponiveis: hotel.quartosDisponiveis + 1}
 		} else{
 			return hotel
@@ -36,9 +45,52 @@ function cancelBookin() {
 
 }
 function makeBookin() {
-	newBookin=prompt("Digite os dados da nova reserva informando o hotel e o cliente separado por vírgula (Ex: Holiday Inn, Guilherme): ")
-
-}
+	let hotelId;
+	let hotelName;
+	let client;
+    
+	let hotelFound = false;
+	while (!hotelFound) {
+	    console.log("Digite os dados da nova reserva informando o hotel e o cliente separado por vírgula (Ex: Holiday Inn, Guilherme): ");
+	    newBooking = prompt("Digite conforme o indicado: ");
+	    const [inputHotelName, inputClient] = newBooking.split(",");
+	    const matchedHotels = hotels.filter((hotel) => hotel.nome === inputHotelName.trim());
+	    if (matchedHotels.length === 1) {
+		hotelId = matchedHotels[0].id;
+		hotelName = matchedHotels[0].nome;
+		hotelFound = true; // Indica que o hotel foi encontrado e saímos do loop
+		client = inputClient.trim(); // Define o valor de client com o valor fornecido pelo usuário
+	    } else {
+		console.log("Hotel não encontrado. Por favor, digite o nome do hotel novamente.");
+	    }
+	}
+	const hotelWithAvailableRooms = hotels.find((hotel) => hotel.id === hotelId && hotel.quartosDisponiveis > 0);
+	if (!hotelWithAvailableRooms) {
+	    console.log("Desculpe, não há quartos disponíveis neste hotel para reserva.");
+	    return;
+	}
+	const newHotelOccupation = hotels.map((hotel) => {
+	    if (hotel.id === hotelId && hotel.quartosDisponiveis > 0) {
+		return {
+		    id: hotel.id,
+		    nome: hotel.nome,
+		    cidade: hotel.cidade,
+		    quartosTotais: hotel.quartosTotais,
+		    quartosDisponiveis: hotel.quartosDisponiveis - 1
+		};
+	    } else {
+		return hotel;
+	    }
+	});
+    
+	let lastIdBooking = bookins[bookins.length - 1].idReserva;
+	lastIdBooking++;
+	bookins.push({ idReserva: lastIdBooking, idHotel: hotelId, nomeCliente: client });
+	hotels = newHotelOccupation;
+	console.log(newHotelOccupation);
+	return bookins;
+    }
+    
 function getAllBookins() {
 	return bookins
 }
@@ -49,16 +101,15 @@ function getHotelByCity(city) {
 }
 function useSystem() {
 	console.log("Bem-vindo ao sistema de reserva de hotéis!");
-	console.log("Selecione uma ação:  \n1- Listar reservas;\n2- Adicionar um hotel;\n3- Buscar hotel por cidade;\n4- Fazer uma reserva;\n5- Cancelar uma reserva;\n6- Sair.");
 	let opt
 	while (opt!=6) {
 		console.log("Selecione uma ação:  \n1- Listar reservas;\n2- Adicionar um hotel;\n3- Buscar hotel por cidade;\n4- Fazer uma reserva;\n5- Cancelar uma reserva;\n6- Sair.");
 		opt=Number(prompt("Digite o número de acordo com a ação escolhida:"))
 		switch (opt) {
 			case 1:
-				const bookins=getAllBookins()
+				let bookinsList=getAllBookins()
 				console.log(`Lista das reservas: `);
-				console.log(bookins);
+				console.log(bookinsList);
 				break
 				
 			case 2:
@@ -74,14 +125,14 @@ function useSystem() {
 					
 			case 4:
 				console.log("Então vamos fazer uma reserva!");
-				makeBookin()
-				
+				let newBookins=makeBookin()
+				console.log(newBookins);
 				break;
 			case 5:
 				console.log("Vamos cancelar sua reserva...");
 				
-				const newBookins=cancelBookin()
-				console.log(newBookins);
+				const cancelBookins=cancelBookin()
+				console.log(cancelBookins);
 				break;
 			case 6:
 				console.log("Fim do programa");
