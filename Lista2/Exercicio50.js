@@ -105,11 +105,51 @@ function reportVacancies() {
 	
 	return report
 }
+function addReview() {
+	let hotelName;
+	let rating;
+    
+	let hotelFound = false;
+	while (!hotelFound) {
+	    console.log("Por favor, informe o nome do hotel onde você esteve");
+	    hotelName = prompt("Digite o nome do hotel: ");
+    
+	    const matchedHotels = hotels.filter((hotel) => hotel.nome === hotelName.trim());
+	    if (matchedHotels.length === 1) {
+		hotelFound = true;
+	    } else {
+		console.log("Hotel não encontrado. Por favor, digite o nome do hotel novamente.");
+	    }
+	}
+    
+	// Solicitar a nota da estadia
+	console.log(`Você esteve no hotel ${hotelName}.`);
+	rating = parseInt(prompt("Por favor, avalie sua estadia de 1 a 5:"));
+    
+	// Verificar se a nota está dentro do intervalo válido (1 a 5)
+	if (isNaN(rating) || rating < 1 || rating > 5) {
+	    console.log("Avaliação inválida. Por favor, forneça uma nota de 1 a 5.");
+	    return;
+	}
+    
+	// Encontrar o hotel correspondente e adicionar a avaliação
+	const hotel = hotels.find((hotel) => hotel.nome === hotelName.trim());
+	if (hotel) {
+	    if (!hotel.avaliacoes) {
+		hotel.avaliacoes = [];
+	    }
+	    hotel.avaliacoes.push(rating);
+	    console.log(`Sua avaliação de ${rating} foi adicionada ao hotel ${hotelName}.`);
+	} else {
+	    console.log("Erro ao adicionar avaliação. Hotel não encontrado.");
+	}
+    }
+    
 function useSystem() {
 	console.log("Bem-vindo ao sistema de reserva de hotéis!");
 	let opt
-	while (opt!=7) {
-		console.log("Selecione uma ação:  \n1- Listar reservas;\n2- Adicionar um hotel;\n3- Buscar hotel por cidade;\n4- Fazer uma reserva;\n5- Cancelar uma reserva;\n6- Gera relatório de vagas\n7- Sair.");
+	while (opt!=8) {
+		console.log("Selecione uma ação:  \n1- Listar reservas;\n2- Adicionar um hotel;\n3- Buscar hotel por cidade;\n4- Fazer uma reserva;\n5- Cancelar uma reserva;\n6- Gera relatório de vagas\n7- Avaliar estadia\n8- Sair.");
 		opt=Number(prompt("Digite o número de acordo com a ação escolhida:"))
 		switch (opt) {
 			case 1:
@@ -146,6 +186,11 @@ function useSystem() {
 				console.log(report);
 				break;
 			case 7:
+				console.log("Já vai embora? Por favor, deixe seu feedback!");
+				
+				addReview()
+				break;
+			case 8:
 				console.log("Fim do programa");
 
 				break;
